@@ -1,5 +1,5 @@
 const offset = 10;
-const side = { 1: "right", 2: "left", 3: "top", 4: "bottom" };
+const side = [ "right", "left", "top", "bottom" ];
 
 function generatePosition(data) {
   let computed = [];
@@ -18,9 +18,7 @@ function generatePosition(data) {
         position = moveToASide(base, computed);
       }
 
-      const diagonalElement = diagonalElementPoints(position);
       positionArray.push(position);
-      console.log("diagonal", diagonalElement);
       computed.push({ ...data[i], ...position });
     }
   }
@@ -42,18 +40,19 @@ function findElementForNext(computed) {
 }
 
 function findSide() {
-  const sideNumber = getRandomInt(1, 4);
-  console.log("sideNumber", sideNumber);
+  const sideNumber = getRandomInt(0, side.length-1);
   return sideNumber;
 }
 
 function checkCollision({ x, y, width, height }, point) {
   const dPoints = diagonalElementPoints({ x, y, width, height });
-  return pointInRect(dPoints, point);
+  const result =  pointInRect(dPoints, point);
+  console.log('point..', {dPoints, point, result})
+  return result;
 }
 
 const pointInRect = ({ x1, y1, x2, y2 }, { x, y }) =>
-  x > x1 && x < x2 && y > y1 && y < y2;
+  x >= x1 && x <= x2 && y >= y1 && y <= y2;
 
 function moveToASide(base, computed) {
   let sideNumber = findSide();
@@ -63,7 +62,8 @@ function moveToASide(base, computed) {
   let tryCount = 0;
 
   do {
-    switch (side[sideNumber]) {
+    const _side = side[sideNumber]
+    switch (_side) {
       case "right":
         position.x = base.x + base.width + offset;
         console.log("hh", position.x);
@@ -78,7 +78,7 @@ function moveToASide(base, computed) {
         position.y = base.y - base.height - offset;
         break;
       default:
-        throw Error(`side ${side} is not implemented`);
+        throw Error(`side ${_side} is not implemented`);
     }
 
     debugger;
@@ -90,6 +90,7 @@ function moveToASide(base, computed) {
 
     if (isCollision) {
       sideNumber = (sideNumber + 1) % sideSize;
+      console.log({sideNumber});
       tryCount++;
     }
   } while (isCollision && tryCount < sideSize);
