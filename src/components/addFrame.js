@@ -33,7 +33,7 @@ class AddEvent extends Component {
                   width={data.width}
                   height={data.height}
                   fill={data.color}
-                  shadowBlur={10}
+                  
                 />
               );
             })}
